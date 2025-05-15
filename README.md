@@ -1,2 +1,2 @@
 # librerirara
-Código de python para el caso de estudio Tienda de libros.
+Página para presenatr el código de python: Caso de estudio Tienda de libros.
