@@ -1,72 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css"/>
     <title>Tienda de Libros - Blog</title>
 </head>
 <body>
-    <header>
+    <header class="header">
         <h1>Tienda de Libros - Caso de estudio</h1>
         <p>Hecho por:</p>
     </header>
 
-    <nav>
+    <nav class="nav">
         <ul>
             <li><a href="#introduccion">Introducción</a></li>
             <li><a href="#diagrama">Diagrama UML</a></li>
             <li><a href="#clases">Clases</a></li>
-            <li><a href="#libreria">Clase 1</a></li>
-            <li><a href="#libro">Clase 2</a></li>
-            <li><a href="#transaccion">Clase 3</a></li>
+            <li><a href="#libreria">Clase Librería</a></li>
+            <li><a href="#libro">Clase Libro</a></li>
+            <li><a href="#transaccion">Clase Transacción</a></li>
         </ul>
+    </nav>
 
-    <main>
-        <section id="#introduccion">
-            <h2>Introducción</h2>
-            <p>Este es un caso de estudio para una tienda de libros. En este blog vamos a presentar toda la estructura para el caso de estudio</p>
-        </section>
-        
-        <section id="#diagrama">
-            <h2>Diagrama UML</h2>
-            <p>Este es el diagrama de clases del caso de estudio.</p>
-            <img src="diagrama.png" alt="Diagrama UML" />
-        </section>
-
-        <section id="#clases">
-            <h2>Clases</h2>
-            <p>En este apartado se van a presentar las clases que componen el caso de estudio.</p>
+    <div class="container">
+        <main>
+            <section id="introduccion">
+                <h2>Introducción</h2>
+                <p>Este es un caso de estudio para una tienda de libros. En este blog vamos a presentar toda la estructura para el caso de estudio</p>
+            </section>
             
-            <article id="#libreria">
-                <h2>Clase Libreria</h2>
-                <p>En esta clase es para.</p>
-                    <p>Este es el código para la clase.</p>
-                    <pre><code>
-                        class Clase1:
-                            def __init__
-                    </code></pre>
-            <article/>
+            <section id="diagrama">
+                <h2>Diagrama UML</h2>
+                <p>Este es el diagrama de clases del caso de estudio.</p>
+                <div class="img-container">
+                    <img src="diagrama.png" alt="Diagrama UML" />
+                </div>
+            </section>
 
-            <article id="#libro">
-                <h2>Clase Libro</h2>
-                <p>En esta clase es para.</p>
-                <p>Este es el código para la clase.</p>
-                <pre><code>
-                    class Clase2:
-                        def __init__
-                </code></pre>
-            <article/>
+            <section id="clases">
+                <h2>Clases</h2>
+                <p>En este apartado se van a presentar las clases que componen el caso de estudio.</p>
+                
+                <article id="libreria" class="card">
+                    <h3>Clase Librería</h3>
+                    <p>En esta clase es para.</p>
+                    <div class="code-block">
+                        <pre><code>class Libreria:
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.inventario = []</code></pre>
+                    </div>
+                </article>
+
+                <article id="libro" class="card">
+                    <h3>Clase Libro</h3>
+                    <p>En esta clase es para.</p>
+                    <div class="code-block">
+                        <pre><code>class Libro:
+    def __init__(self, titulo, autor, precio):
+        self.titulo = titulo
+        self.autor = autor
+        self.precio = precio</code></pre>
+                    </div>
+                </article>
+        
+                <article id="transaccion" class="card">
+                    <h3>Clase Transacción</h3>
+                    <p>En esta clase es para.</p>
+                    <div class="code-block">
+                        <pre><code>class Transaccion:
+    def __init__(self, libro, cantidad, fecha):
+        self.libro = libro
+        self.cantidad = cantidad
+        self.fecha = fecha</code></pre>
+                    </div>
+                </article>
+            </section>
+        </main>
+        
+        <aside class="sidebar">
+            <h3>Recursos</h3>
+            <ul>
+                <li><a href="#">wi</a></li>
+                <li><a href="#">GitHub</a></li>
+            </ul>
+            
+            <div class="sidebar-block">
+                <h4>Enlaces relacionados</h4>
+                <ul>
+                    <li><a href="#">lala</a></li>
+                    <li><a href="#">UwU</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
     
-            <article id="#transaccion">
-                <h2>Clase Transaccion</h2>
-                <p>En esta clase es para.</p>
-                <p>Este es el código para la clase.</p>
-                <pre><code>
-                    class Clase3:
-                        def __init__
-                </code></pre>
-            <article/>
-        </section>
-    </main>
+    <footer class="footer">
+        <p>&copy; 2025 Tienda de Libros - Todos los derechos reservados</p>
+    </footer>
 </body>
 </html>
