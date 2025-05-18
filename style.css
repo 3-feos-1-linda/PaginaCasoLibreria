@@ -78,7 +78,7 @@
 body {
     background-color: var(--color-beige-claro);
     color: var(--color-negro);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Playfair Display', Georgia, serif;
     line-height: 1.6;
 }
 
