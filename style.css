@@ -10,6 +10,35 @@
     --color-acento: #574037;
 }
 
+.header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--color-cafe-oscuro);
+    color: var(--color-blanco);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo-container {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.logo {
+    height: 60px;
+    width: auto;
+    max-width: 100%;
+}
+
+.header h1 {
+    margin: 0 auto;
+    margin-bottom: 10px;
+    font-size: 2.2rem;
+}
+
 .team-card {
     background-color: var(--color-beige-claro);
     padding: 2rem;
