@@ -16,7 +16,7 @@
         <p><3</p>
         
     </header>  
-    
+
     <div class="team-card">
         <div class="team-info">
             <p><strong>Universidad:</strong> Universidad Cooperativa de Colombia Campus Pasto</p>
@@ -48,7 +48,7 @@
             <li><a href="#introduccion">Introducción</a></li>
             <li><a href="#diagrama">Diagrama UML</a></li>
             <li><a href="#clases">Clases</a></li>
-            <li><a href="#libreria">Clase Libreria</a></li>
+            <li><a href="#TiendaDeLibros">Clase TiendaDeLibros</a></li>
             <li><a href="#libro">Clase Libro</a></li>
             <li><a href="#transaccion">Clase Transaccion</a></li>
             <li><a href="https://github.com/3-feos-1-linda/codigoLibrarara">GitHub</a></li>
@@ -75,14 +75,159 @@
                 <h2>Clases</h2>
                 <p>En este apartado se van a presentar las clases que componen el caso de estudio.</p>
                 
-                <article id="libreria" class="card">
+                <article id="TiendaDeLibros" class="card">
                     <h3>Clase Libreria</h3>
                     <p>Esta clase representa la librería en sí. Gestiona un catálogo de libros y el dinero disponible. Utiliza la <a href="#libro">clase Libro</a> para manejar los libros individuales.</p>
                     <div class="code-block">
-                        <pre><code>class Libreria:
-    def __init__(self, nombre):
-        self.nombre = nombre
-        self.inventario = []</code></pre>
+                        <pre><code>
+class Libreria:
+from libro import Libro
+from tipo import Tipo
+
+class TiendaDeLibros:
+    def __init__(self):
+        self.__caja = 1000000
+        self.__catalogo = []
+
+    
+    def darCatalogo(self):
+        return self.__catalogo
+
+    
+    def darCaja(self) -> float:
+        return self.__caja
+
+    
+    def cambiarCaja(self, nueva_caja: float) -> None:
+        self.__caja = nueva_caja
+
+    
+    def buscarLibroPorTitulo(self, titulo: str):
+        titulo_lower = titulo.lower()
+        for libro in self.__catalogo:
+            if libro.darTitulo().lower() == titulo_lower:
+                return libro
+        return None
+
+    
+    def buscarLibroPorISBN(self, isbn: str):
+        for libro in self.__catalogo:
+            if libro.darIsbn() == isbn:
+                return libro
+        return None
+
+    
+    def registrarLibro(self, isbn: str, titulo: str, precio_compra: float, precio_venta: float, ruta_imagen: str = "") -> Libro:
+        for libro in self.__catalogo:
+            if libro.darIsbn() == isbn:
+                return ValueError(f"Ya existe un libro con el ISBN {isbn}")
+        
+        nuevo_libro = Libro(isbn, titulo, precio_venta, precio_compra, 0, ruta_imagen)
+        self.__catalogo.append(nuevo_libro)
+        return nuevo_libro
+
+    
+    def eliminarLibro(self, isbn: str) -> bool:
+        for i, libro in enumerate(self.__catalogo):
+            if libro.darIsbn() == isbn:
+                self.__catalogo.pop(i)
+                return True
+        return False
+
+    
+    def abastecer(self, isbn: str, cantidad: int, fecha: str) -> bool:
+        libro = self.buscarLibroPorISBN(isbn)
+        if libro is None:
+            return False
+        
+        costo_total = cantidad * libro.darPrecioCompra()
+        if self.__caja >= costo_total:
+            libro.abastecer(cantidad, fecha)
+            self.__caja -= costo_total
+            return True
+        
+        return False
+
+    
+    def vender(self, isbn: str, cantidad: int, fecha: str) -> bool:
+        libro = self.buscarLibroPorISBN(isbn)
+        if libro is None or libro.darCantidadActual() < cantidad:
+            return False
+        
+        if libro.vender(cantidad, fecha):
+            ingreso = cantidad * libro.darPrecioVenta()
+            self.__caja += ingreso
+            return True
+        
+        return False
+
+    
+    def darLibroMasCostoso(self):
+        if not self.__catalogo:
+            return None
+        
+        libro_mas_costoso = self.__catalogo[0]
+        for libro in self.__catalogo[1:]:
+            if libro.darPrecioVenta() > libro_mas_costoso.darPrecioVenta():
+                libro_mas_costoso = libro
+        
+        return libro_mas_costoso
+
+    
+    def darLibroMasEconomico(self):
+        if not self.__catalogo:
+            return None
+        
+        libro_mas_economico = self.__catalogo[0]
+        for libro in self.__catalogo[1:]:
+            if libro.darPrecioVenta() < libro_mas_economico.darPrecioVenta():
+                libro_mas_economico = libro
+        
+        return libro_mas_economico
+
+    
+    def darLibroMasVendido(self):
+        if not self.__catalogo:
+            return None
+        
+        libro_mas_vendido = None
+        max_vendidos = 0
+        
+        for libro in self.__catalogo:
+            total_vendidos = 0
+            for transaccion in libro.darTransacciones():
+                if transaccion.darTipo() == Tipo.VENTA:
+                    total_vendidos += transaccion.darCantidad()
+            
+            if total_vendidos > max_vendidos:
+                max_vendidos = total_vendidos
+                libro_mas_vendido = libro
+        
+        return libro_mas_vendido
+
+    
+    def darCantidadTransaccionesAbastecimiento(self, isbn: str) -> int:
+        libro = self.buscarLibroPorISBN(isbn)
+        if libro is None:
+            return 0
+        
+        contador = 0
+        for transaccion in libro.darTransacciones():
+            if transaccion.darTipo() == Tipo.ABASTECIMIENTO:
+                contador += 1
+        
+        return contador
+
+
+
+#metodos auxiliares segun el diagrama mostrado en clase
+    
+    def metodo1(self) -> str:
+        return "Método 1"
+
+    
+    def metodo2(self) -> str:
+        return "Método 2"</code></pre>
                     </div>
                 </article>
 
@@ -90,11 +235,155 @@
                     <h3>Clase Libro</h3>
                         <p>Esta clase modela un libro con sus atributos y las operaciones que se pueden realizar con él, como abastecer o vender. Utiliza la <a href="#transaccion">clase Transaccion</a> para registrar estas operaciones.</p>
                     <div class="code-block">
-                        <pre><code>class Libro:
-    def __init__(self, titulo, autor, precio):
-        self.titulo = titulo
-        self.autor = autor
-        self.precio = precio</code></pre>
+                        <pre><code>
+from libro import Libro
+from tipo import Tipo
+
+class TiendaDeLibros:
+    def __init__(self):
+        self.__caja = 1000000
+        self.__catalogo = []
+
+    
+    def darCatalogo(self):
+        return self.__catalogo
+
+    
+    def darCaja(self) -> float:
+        return self.__caja
+
+    
+    def cambiarCaja(self, nueva_caja: float) -> None:
+        self.__caja = nueva_caja
+
+    
+    def buscarLibroPorTitulo(self, titulo: str):
+        titulo_lower = titulo.lower()
+        for libro in self.__catalogo:
+            if libro.darTitulo().lower() == titulo_lower:
+                return libro
+        return None
+
+    
+    def buscarLibroPorISBN(self, isbn: str):
+        for libro in self.__catalogo:
+            if libro.darIsbn() == isbn:
+                return libro
+        return None
+
+    
+    def registrarLibro(self, isbn: str, titulo: str, precio_compra: float, precio_venta: float, ruta_imagen: str = "") -> Libro:
+        for libro in self.__catalogo:
+            if libro.darIsbn() == isbn:
+                return ValueError(f"Ya existe un libro con el ISBN {isbn}")
+        
+        nuevo_libro = Libro(isbn, titulo, precio_venta, precio_compra, 0, ruta_imagen)
+        self.__catalogo.append(nuevo_libro)
+        return nuevo_libro
+
+    
+    def eliminarLibro(self, isbn: str) -> bool:
+        for i, libro in enumerate(self.__catalogo):
+            if libro.darIsbn() == isbn:
+                self.__catalogo.pop(i)
+                return True
+        return False
+
+    
+    def abastecer(self, isbn: str, cantidad: int, fecha: str) -> bool:
+        libro = self.buscarLibroPorISBN(isbn)
+        if libro is None:
+            return False
+        
+        costo_total = cantidad * libro.darPrecioCompra()
+        if self.__caja >= costo_total:
+            libro.abastecer(cantidad, fecha)
+            self.__caja -= costo_total
+            return True
+        
+        return False
+
+    
+    def vender(self, isbn: str, cantidad: int, fecha: str) -> bool:
+        libro = self.buscarLibroPorISBN(isbn)
+        if libro is None or libro.darCantidadActual() < cantidad:
+            return False
+        
+        if libro.vender(cantidad, fecha):
+            ingreso = cantidad * libro.darPrecioVenta()
+            self.__caja += ingreso
+            return True
+        
+        return False
+
+    
+    def darLibroMasCostoso(self):
+        if not self.__catalogo:
+            return None
+        
+        libro_mas_costoso = self.__catalogo[0]
+        for libro in self.__catalogo[1:]:
+            if libro.darPrecioVenta() > libro_mas_costoso.darPrecioVenta():
+                libro_mas_costoso = libro
+        
+        return libro_mas_costoso
+
+    
+    def darLibroMasEconomico(self):
+        if not self.__catalogo:
+            return None
+        
+        libro_mas_economico = self.__catalogo[0]
+        for libro in self.__catalogo[1:]:
+            if libro.darPrecioVenta() < libro_mas_economico.darPrecioVenta():
+                libro_mas_economico = libro
+        
+        return libro_mas_economico
+
+    
+    def darLibroMasVendido(self):
+        if not self.__catalogo:
+            return None
+        
+        libro_mas_vendido = None
+        max_vendidos = 0
+        
+        for libro in self.__catalogo:
+            total_vendidos = 0
+            for transaccion in libro.darTransacciones():
+                if transaccion.darTipo() == Tipo.VENTA:
+                    total_vendidos += transaccion.darCantidad()
+            
+            if total_vendidos > max_vendidos:
+                max_vendidos = total_vendidos
+                libro_mas_vendido = libro
+        
+        return libro_mas_vendido
+
+    
+    def darCantidadTransaccionesAbastecimiento(self, isbn: str) -> int:
+        libro = self.buscarLibroPorISBN(isbn)
+        if libro is None:
+            return 0
+        
+        contador = 0
+        for transaccion in libro.darTransacciones():
+            if transaccion.darTipo() == Tipo.ABASTECIMIENTO:
+                contador += 1
+        
+        return contador
+
+
+
+#metodos auxiliares segun el diagrama mostrado en clase
+    
+    def metodo1(self) -> str:
+        return "Método 1"
+
+    
+    def metodo2(self) -> str:
+        return "Método 2"
+                        </code></pre>
                     </div>
                 </article>
         
@@ -102,11 +391,28 @@
                     <h3>Clase Transaccion</h3>
                     <p>Esta clase se encarga de representar una transacción que puede ser de dos tipos: venta o abastecimiento.</p>
                     <div class="code-block">
-                        <pre><code>class Transaccion:
-    def __init__(self, libro, cantidad, fecha):
-        self.libro = libro
-        self.cantidad = cantidad
-        self.fecha = fecha</code></pre>
+                        <pre><code>
+from tipo import Tipo
+
+class Transaccion:
+    def __init__(self, tipo: Tipo, fecha: str, cantidad: int):
+        self.__tipo = tipo
+        self.__fecha = fecha
+        self.__cantidad = cantidad
+    
+    def darTipo(self) -> Tipo:
+        return self.__tipo
+        
+    def darFecha(self) -> str:
+        return self.__fecha
+        
+    def darCantidad(self) -> int:
+        return self.__cantidad
+    
+    def toString(self) -> str:  #aparece en el diagrama mostrado en clase, devuelve una representación en cadena de la transacción.
+        tipo_str = "Venta" if self.__tipo == Tipo.VENTA else "Abastecimiento"
+        return f"{tipo_str} - Fecha: {self.__fecha} - Cantidad: {self.__cantidad}"
+                        </code></pre>
                     </div>
                 </article>
             </section>
