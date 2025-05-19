@@ -199,7 +199,7 @@ section p {
 .card h3 {
     color: var(--color-cafe-medio-oscuro);
     margin-bottom: 15px;
-    font-size: 3rem;
+    font-size: 2rem;
 }
 
 
@@ -238,6 +238,29 @@ pre {
     border-radius: 4px;
     overflow-x: auto;
     border: 1px solid var(--color-cafe-claro);
+    /* Añadido para limitar la altura y agregar barra de desplazamiento */
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Estilizar la barra de desplazamiento para navegadores WebKit */
+pre::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+pre::-webkit-scrollbar-track {
+    background: var(--color-beige-claro);
+    border-radius: 4px;
+}
+
+pre::-webkit-scrollbar-thumb {
+    background: var(--color-cafe-medio);
+    border-radius: 4px;
+}
+
+pre::-webkit-scrollbar-thumb:hover {
+    background: var(--color-cafe-medio-oscuro);
 }
 
 code {
@@ -318,6 +341,11 @@ code {
         position: static;
         margin-top: 20px;
     }
+    
+    /* Ajuste para mejor visualización en pantallas medianas */
+    .card h3 {
+        font-size: 1.8rem;
+    }
 }
 
 @media (max-width: 600px) {
@@ -331,6 +359,15 @@ code {
 
     .container {
         padding: 10px;
+    }
+    
+    /* Ajuste para mejor visualización en pantallas pequeñas */
+    .card h3 {
+        font-size: 1.5rem;
+    }
+    
+    pre {
+        max-height: 250px;
     }
 }
 
