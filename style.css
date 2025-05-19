@@ -332,3 +332,21 @@ code {
         padding: 10px;
     }
 }
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        padding-top: 70px;
+    }
+    
+    .logo-container {
+        position: absolute;
+        left: 50%;
+        top: 10px;
+        transform: translateX(-50%);
+    }
+    
+    .logo {
+        height: 50px;
+    }
+}
