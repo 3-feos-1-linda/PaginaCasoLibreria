@@ -51,15 +51,6 @@
             <li><a href="#TiendaDeLibros">Clase TiendaDeLibros</a></li>
             <li><a href="#libro">Clase Libro</a></li>
             <li><a href="#transaccion">Clase Transaccion</a></li>
-            <li><a href="   ">   </a></li>
-            <li><a href="   ">   </a></li>
-            <li><a href="   ">   </a></li>
-            <li><a href="   ">   </a></li>
-            <li><a href="   ">   </a></li>
-            <li><a href="   ">   </a></li>
-            <li><a href="   ">   </a></li>
-            <li><a href="   ">   </a></li>
-
             <li><a href="https://github.com/3-feos-1-linda/codigoLibrarara">GitHub</a></li>
 
         </ul>
@@ -85,11 +76,10 @@
                 <p>En este apartado se van a presentar las clases que componen el caso de estudio.</p>
                 
                 <article id="TiendaDeLibros" class="card">
-                    <h3>Clase Libreria</h3>
+                    <h3>Clase TiendaDeLibros</h3>
                     <p>Esta clase representa la librería en sí. Gestiona un catálogo de libros y el dinero disponible. Utiliza la <a href="#libro">clase Libro</a> para manejar los libros individuales.</p>
                     <div class="code-block">
                         <pre><code>
-class Libreria:
 from libro import Libro
 from tipo import Tipo
 
@@ -245,153 +235,70 @@ class TiendaDeLibros:
                         <p>Esta clase modela un libro con sus atributos y las operaciones que se pueden realizar con él, como abastecer o vender. Utiliza la <a href="#transaccion">clase Transaccion</a> para registrar estas operaciones.</p>
                     <div class="code-block">
                         <pre><code>
-from libro import Libro
+from transaccion import Transaccion
 from tipo import Tipo
 
-class TiendaDeLibros:
-    def __init__(self):
-        self.__caja = 1000000
-        self.__catalogo = []
+class Libro:
+    def __init__(self, isbn: str, titulo: str, precio_venta: float, precio_compra: float, cantidad_actual: int = 0, ruta_imagen: str = ""):
+        self.__isbn = isbn
+        self.__titulo = titulo
+        self.__precio_venta = precio_venta
+        self.__precio_compra = precio_compra
+        self.__cantidad_actual = cantidad_actual
+        self.__ruta_imagen = ruta_imagen
+        self.__transacciones = []
 
     
-    def darCatalogo(self):
-        return self.__catalogo
+    def darIsbn(self) -> str:
+        return self.__isbn
 
     
-    def darCaja(self) -> float:
-        return self.__caja
+    def darTitulo(self) -> str:
+        return self.__titulo
 
     
-    def cambiarCaja(self, nueva_caja: float) -> None:
-        self.__caja = nueva_caja
+    def darPrecioVenta(self) -> float:
+        return self.__precio_venta
 
     
-    def buscarLibroPorTitulo(self, titulo: str):
-        titulo_lower = titulo.lower()
-        for libro in self.__catalogo:
-            if libro.darTitulo().lower() == titulo_lower:
-                return libro
-        return None
+    def darPrecioCompra(self) -> float:
+        return self.__precio_compra
 
     
-    def buscarLibroPorISBN(self, isbn: str):
-        for libro in self.__catalogo:
-            if libro.darIsbn() == isbn:
-                return libro
-        return None
+    def darCantidadActual(self) -> int:
+        return self.__cantidad_actual
 
     
-    def registrarLibro(self, isbn: str, titulo: str, precio_compra: float, precio_venta: float, ruta_imagen: str = "") -> Libro:
-        for libro in self.__catalogo:
-            if libro.darIsbn() == isbn:
-                return ValueError(f"Ya existe un libro con el ISBN {isbn}")
-        
-        nuevo_libro = Libro(isbn, titulo, precio_venta, precio_compra, 0, ruta_imagen)
-        self.__catalogo.append(nuevo_libro)
-        return nuevo_libro
+    def darRutaImagen(self) -> str:
+        return self.__ruta_imagen
 
     
-    def eliminarLibro(self, isbn: str) -> bool:
-        for i, libro in enumerate(self.__catalogo):
-            if libro.darIsbn() == isbn:
-                self.__catalogo.pop(i)
-                return True
-        return False
-
-    
-    def abastecer(self, isbn: str, cantidad: int, fecha: str) -> bool:
-        libro = self.buscarLibroPorISBN(isbn)
-        if libro is None:
+    def vender(self, cantidad: int, fecha: str) -> bool:
+        if cantidad <= 0:
             return False
         
-        costo_total = cantidad * libro.darPrecioCompra()
-        if self.__caja >= costo_total:
-            libro.abastecer(cantidad, fecha)
-            self.__caja -= costo_total
+        if self.__cantidad_actual >= cantidad:
+            self.__cantidad_actual -= cantidad
+            transaccion = Transaccion(Tipo.VENTA, fecha, cantidad)
+            self.__transacciones.append(transaccion)
             return True
         
         return False
 
     
-    def vender(self, isbn: str, cantidad: int, fecha: str) -> bool:
-        libro = self.buscarLibroPorISBN(isbn)
-        if libro is None or libro.darCantidadActual() < cantidad:
-            return False
-        
-        if libro.vender(cantidad, fecha):
-            ingreso = cantidad * libro.darPrecioVenta()
-            self.__caja += ingreso
-            return True
-        
-        return False
+    def abastecer(self, cantidad: int, fecha: str) -> None:
+        if cantidad > 0:
+            self.__cantidad_actual += cantidad
+            transaccion = Transaccion(Tipo.ABASTECIMIENTO, fecha, cantidad)
+            self.__transacciones.append(transaccion)
 
     
-    def darLibroMasCostoso(self):
-        if not self.__catalogo:
-            return None
-        
-        libro_mas_costoso = self.__catalogo[0]
-        for libro in self.__catalogo[1:]:
-            if libro.darPrecioVenta() > libro_mas_costoso.darPrecioVenta():
-                libro_mas_costoso = libro
-        
-        return libro_mas_costoso
+    def darTransacciones(self):
+        return self.__transacciones
 
     
-    def darLibroMasEconomico(self):
-        if not self.__catalogo:
-            return None
-        
-        libro_mas_economico = self.__catalogo[0]
-        for libro in self.__catalogo[1:]:
-            if libro.darPrecioVenta() < libro_mas_economico.darPrecioVenta():
-                libro_mas_economico = libro
-        
-        return libro_mas_economico
-
-    
-    def darLibroMasVendido(self):
-        if not self.__catalogo:
-            return None
-        
-        libro_mas_vendido = None
-        max_vendidos = 0
-        
-        for libro in self.__catalogo:
-            total_vendidos = 0
-            for transaccion in libro.darTransacciones():
-                if transaccion.darTipo() == Tipo.VENTA:
-                    total_vendidos += transaccion.darCantidad()
-            
-            if total_vendidos > max_vendidos:
-                max_vendidos = total_vendidos
-                libro_mas_vendido = libro
-        
-        return libro_mas_vendido
-
-    
-    def darCantidadTransaccionesAbastecimiento(self, isbn: str) -> int:
-        libro = self.buscarLibroPorISBN(isbn)
-        if libro is None:
-            return 0
-        
-        contador = 0
-        for transaccion in libro.darTransacciones():
-            if transaccion.darTipo() == Tipo.ABASTECIMIENTO:
-                contador += 1
-        
-        return contador
-
-
-
-#metodos auxiliares segun el diagrama mostrado en clase
-    
-    def metodo1(self) -> str:
-        return "Método 1"
-
-    
-    def metodo2(self) -> str:
-        return "Método 2"
+    def toString(self) -> str:
+        return f"ISBN: {self.__isbn}, Título: {self.__titulo}, Precio Venta: ${self.__precio_venta}, Precio Compra: ${self.__precio_compra}, Cantidad: {self.__cantidad_actual}"
                         </code></pre>
                     </div>
                 </article>
@@ -430,9 +337,16 @@ class Transaccion:
         <aside class="sidebar">
             <h3>Recursos Importantes</h3>
             <ul>
-                <li><a href="https://www.figma.com/community/file/1506138438155652635/pagina-libros-ucc"target="_blank">Figma Interfaz SSP</a></li>
+                <li><a href="#">wi</a></li>
                 <li><a href="https://github.com/3-feos-1-linda/codigoLibrarara" target="_blank">GitHub</a></li>
-
+            </ul>
+            
+            <div class="sidebar-block">
+                <h4>Enlaces relacionados</h4>
+                <ul>
+                    <li><a href="#">lala</a></li>
+                    <li><a href="#">UwU</a></li>
+                </ul>
             </div>
         </aside>
     </div>
